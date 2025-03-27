@@ -1,11 +1,10 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserProfile } from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, MapPin, Users, DollarSign, BarChart3 } from "lucide-react";
+import { CheckCircle2, MapPin, Users, DollarSign } from "lucide-react";
 import { ProfileEngagementDisplay } from "./profile/ProfileEngagementDisplay";
 
 interface ProfileCardProps {
@@ -26,27 +25,6 @@ export function ProfileCard({ profile }: ProfileCardProps) {
   const getTotalFollowers = () => {
     return profile.followers_count || 0;
   };
-
-  // Calculate engagement rate if stats are available
-  const calculateEngagementRate = () => {
-    if (!profile.engagement_stats || !profile.followers_count) return null;
-    
-    const stats = profile.engagement_stats;
-    const avgLikes = stats.likes?.reduce((a, b) => a + b, 0) / 3 || 0;
-    const avgComments = stats.comments?.reduce((a, b) => a + b, 0) / 3 || 0;
-    
-    return ((avgLikes + avgComments) / profile.followers_count) * 100;
-  };
-
-  // Determine engagement level based on rate
-  const getEngagementLevel = (rate: number) => {
-    if (rate >= 6) return { level: 'viral', color: 'bg-yellow-500 hover:bg-yellow-600' };
-    if (rate >= 3) return { level: 'high', color: 'bg-green-500 hover:bg-green-600' };
-    if (rate >= 1) return { level: 'moderate', color: 'bg-blue-500 hover:bg-blue-600' };
-    return { level: 'low', color: 'bg-gray-500 hover:bg-gray-600' };
-  };
-
-  const engagementRate = profile.type === 'creator' ? calculateEngagementRate() : null;
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
@@ -112,13 +90,6 @@ export function ProfileCard({ profile }: ProfileCardProps) {
                 <Users className="h-4 w-4" />
                 <span>{getTotalFollowers().toLocaleString()} followers</span>
               </div>
-
-              {profile.type === 'creator' && engagementRate !== null && (
-                <div className="flex items-center gap-1 mt-2 text-sm text-muted-foreground">
-                  <BarChart3 className="h-4 w-4" />
-                  <span>{engagementRate.toFixed(2)}% Engagement</span>
-                </div>
-              )}
 
               {profile.type === 'creator' && profile.engagement_stats && (
                 <div className="mt-2">
