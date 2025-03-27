@@ -9,17 +9,127 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      campaigns: {
+        Row: {
+          brand_id: string | null
+          budget_range: string | null
+          contact_info: Json | null
+          content_type: string[] | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          extra_notes: string | null
+          follower_range: string | null
+          geographic_targeting: string[] | null
+          hashtags: string[] | null
+          id: string
+          max_budget: number | null
+          min_budget: number | null
+          min_engagement_rate: number | null
+          past_collaborations: string | null
+          payment_type: string | null
+          preferred_gender: string | null
+          preferred_niches: string[] | null
+          preferred_platforms: string[] | null
+          requirements: string | null
+          start_date: string | null
+          status: string | null
+          title: string
+          updated_at: string
+          usage_rights: string | null
+        }
+        Insert: {
+          brand_id?: string | null
+          budget_range?: string | null
+          contact_info?: Json | null
+          content_type?: string[] | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          extra_notes?: string | null
+          follower_range?: string | null
+          geographic_targeting?: string[] | null
+          hashtags?: string[] | null
+          id?: string
+          max_budget?: number | null
+          min_budget?: number | null
+          min_engagement_rate?: number | null
+          past_collaborations?: string | null
+          payment_type?: string | null
+          preferred_gender?: string | null
+          preferred_niches?: string[] | null
+          preferred_platforms?: string[] | null
+          requirements?: string | null
+          start_date?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string
+          usage_rights?: string | null
+        }
+        Update: {
+          brand_id?: string | null
+          budget_range?: string | null
+          contact_info?: Json | null
+          content_type?: string[] | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          extra_notes?: string | null
+          follower_range?: string | null
+          geographic_targeting?: string[] | null
+          hashtags?: string[] | null
+          id?: string
+          max_budget?: number | null
+          min_budget?: number | null
+          min_engagement_rate?: number | null
+          past_collaborations?: string | null
+          payment_type?: string | null
+          preferred_gender?: string | null
+          preferred_niches?: string[] | null
+          preferred_platforms?: string[] | null
+          requirements?: string | null
+          start_date?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          usage_rights?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           bio: string | null
+          budget_range: Json | null
           categories: string[] | null
+          collaboration_types: string | null
           created_at: string | null
+          date_of_birth: string | null
           email: string | null
+          engagement_rate: number | null
+          engagement_stats: Json | null
           followers_count: number | null
+          gender: string | null
           id: string
+          is_public: boolean | null
           location: string | null
+          max_budget: number | null
+          min_budget: number | null
           name: string
+          partnership_goals: string | null
+          past_collaborations: string | null
+          phone: string | null
+          platforms: string[] | null
+          preferred_contact: string | null
+          preferred_creator_niches: string | null
           social_links: Json | null
           type: string
           updated_at: string | null
@@ -28,13 +138,28 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          budget_range?: Json | null
           categories?: string[] | null
+          collaboration_types?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
           email?: string | null
+          engagement_rate?: number | null
+          engagement_stats?: Json | null
           followers_count?: number | null
+          gender?: string | null
           id: string
+          is_public?: boolean | null
           location?: string | null
+          max_budget?: number | null
+          min_budget?: number | null
           name: string
+          partnership_goals?: string | null
+          past_collaborations?: string | null
+          phone?: string | null
+          platforms?: string[] | null
+          preferred_contact?: string | null
+          preferred_creator_niches?: string | null
           social_links?: Json | null
           type: string
           updated_at?: string | null
@@ -43,13 +168,28 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          budget_range?: Json | null
           categories?: string[] | null
+          collaboration_types?: string | null
           created_at?: string | null
+          date_of_birth?: string | null
           email?: string | null
+          engagement_rate?: number | null
+          engagement_stats?: Json | null
           followers_count?: number | null
+          gender?: string | null
           id?: string
+          is_public?: boolean | null
           location?: string | null
+          max_budget?: number | null
+          min_budget?: number | null
           name?: string
+          partnership_goals?: string | null
+          past_collaborations?: string | null
+          phone?: string | null
+          platforms?: string[] | null
+          preferred_contact?: string | null
+          preferred_creator_niches?: string | null
           social_links?: Json | null
           type?: string
           updated_at?: string | null
