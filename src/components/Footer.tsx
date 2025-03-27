@@ -25,8 +25,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/brands" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Browse Brands
+                <Link to="/brand-campaigns" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Brand Campaigns
                 </Link>
               </li>
             </ul>
