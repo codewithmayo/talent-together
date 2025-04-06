@@ -1,32 +1,74 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
-import { supabase } from "@/integrations/supabase/client"
-import { Navigation } from "@/components/Navigation"
-import { Footer } from "@/components/Footer"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Loader2, Plus, X, Instagram, Twitter, Facebook, Linkedin, Youtube, Send, Globe } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { creatorCategories, brandCategories } from "@/lib/categories"
-import { ProfileEngagementStats, type EngagementStats } from "@/components/profile/ProfileEngagementStats"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Loader2,
+  Plus,
+  X,
+  Instagram,
+  Twitter,
+  Facebook,
+  Linkedin,
+  Youtube,
+  Send,
+  Globe,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { creatorCategories, brandCategories } from "@/lib/categories";
+import {
+  ProfileEngagementStats,
+  type EngagementStats,
+} from "@/components/profile/ProfileEngagementStats";
 
-const PLATFORMS = ["Instagram", "TikTok", "Twitter", "YouTube", "Twitch", "Facebook", "Other"]
+const PLATFORMS = [
+  "Instagram",
+  "TikTok",
+  "Twitter",
+  "YouTube",
+  "Twitch",
+  "Facebook",
+  "Other",
+];
 
 const COLLABORATION_TYPES = [
   "Paid Sponsorships",
@@ -38,7 +80,7 @@ const COLLABORATION_TYPES = [
   "Event Appearances",
   "Content Creation",
   "Social Media Takeovers",
-]
+];
 
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -56,7 +98,11 @@ const profileSchema = z.object({
   partnership_goals: z.string().optional(),
   past_collaborations: z.string().optional(),
   is_public: z.boolean().optional(),
-  gender: z.enum(["male", "female", "other", "prefer_not_to_say"]).optional().default("prefer_not_to_say"),
+  under_review: z.boolean().optional(),
+  gender: z
+    .enum(["male", "female", "other", "prefer_not_to_say"])
+    .optional()
+    .default("prefer_not_to_say"),
   date_of_birth: z.string().optional(),
   preferred_contact: z.enum(["email", "phone"]).optional().default("email"),
   phone: z.string().optional(),
@@ -76,56 +122,63 @@ const profileSchema = z.object({
       hideAnalytics: z.boolean().optional(),
     })
     .optional(),
-})
+});
 
 type SocialLink = {
-  platform: string
-  url: string
-  followers: number
-}
+  platform: string;
+  url: string;
+  followers: number;
+};
 
 type UserProfile = {
-  id: string
-  type: "creator" | "brand"
-  name: string
-  bio?: string
-  location?: string
-  website?: string
-  followers_count?: number
-  categories?: string[]
-  platforms?: string[]
-  budget_range?: string
-  min_budget?: number
-  max_budget?: number
-  collaboration_types?: string[]
-  preferred_creator_niches?: string[]
-  partnership_goals?: string
-  past_collaborations?: string
-  is_public?: boolean
-  social_links?: SocialLink[]
-  avatar_url?: string
-  email?: string
-  phone?: string
-  preferred_contact?: "email" | "phone"
-  created_at?: string
-  updated_at?: string
-  engagement_stats?: EngagementStats
-  gender?: "male" | "female" | "other" | "prefer_not_to_say"
-  date_of_birth?: string
-}
+  id: string;
+  type: "creator" | "brand";
+  name: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  followers_count?: number;
+  categories?: string[];
+  platforms?: string[];
+  budget_range?: string;
+  min_budget?: number;
+  max_budget?: number;
+  collaboration_types?: string[];
+  preferred_creator_niches?: string[];
+  partnership_goals?: string;
+  past_collaborations?: string;
+  is_public?: boolean;
+  under_review?: boolean;
+  social_links?: SocialLink[];
+  avatar_url?: string;
+  email?: string;
+  phone?: string;
+  preferred_contact?: "email" | "phone";
+  created_at?: string;
+  updated_at?: string;
+  engagement_stats?: EngagementStats;
+  gender?: "male" | "female" | "other" | "prefer_not_to_say";
+  date_of_birth?: string;
+};
 
-const budgetRangeOptions = ["Under $100", "$100 - $500", "$500 - $1,000", "$1,000 - $5,000", "$5,000+"]
+const budgetRangeOptions = [
+  "Under $100",
+  "$100 - $500",
+  "$500 - $1,000",
+  "$1,000 - $5,000",
+  "$5,000+",
+];
 
 const ProfileEdit = () => {
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([])
-  const [totalFollowers, setTotalFollowers] = useState(0)
-  const [uploadingAvatar, setUploadingAvatar] = useState(false)
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [totalFollowers, setTotalFollowers] = useState(0);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -145,6 +198,7 @@ const ProfileEdit = () => {
       partnership_goals: "",
       past_collaborations: "",
       is_public: false,
+      under_review: false,
       gender: "prefer_not_to_say",
       date_of_birth: "",
       preferred_contact: "email",
@@ -163,50 +217,53 @@ const ProfileEdit = () => {
       },
     },
     mode: "onSubmit",
-  })
+  });
 
   useEffect(() => {
     const subscription = form.watch((value, { name, type }) => {
       if (form.formState.errors) {
-        console.log("Form errors:", JSON.stringify(form.formState.errors, null, 2))
+        console.log(
+          "Form errors:",
+          JSON.stringify(form.formState.errors, null, 2),
+        );
       }
-    })
-    return () => subscription.unsubscribe()
-  }, [form])
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   useEffect(() => {
     const checkAuth = async () => {
       const {
         data: { session },
         error,
-      } = await supabase.auth.getSession()
+      } = await supabase.auth.getSession();
 
       if (error) {
-        console.error("Error checking auth:", error)
-        setLoading(false)
-        navigate("/login")
-        return
+        console.error("Error checking auth:", error);
+        setLoading(false);
+        navigate("/login");
+        return;
       }
 
       if (!session) {
-        setLoading(false)
-        navigate("/login")
-        return
+        setLoading(false);
+        navigate("/login");
+        return;
       }
 
-      setUser(session.user)
+      setUser(session.user);
 
       try {
         const { data: profileData, error: profileError } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", session.user.id)
-          .single()
+          .single();
 
         if (profileError) {
           if (profileError.code !== "PGRST116") {
-            console.error("Error fetching profile:", profileError)
-            toast.error("Failed to load profile data")
+            console.error("Error fetching profile:", profileError);
+            toast.error("Failed to load profile data");
           }
           // Initialize form with user data for new users
           form.reset({
@@ -225,6 +282,7 @@ const ProfileEdit = () => {
             partnership_goals: "",
             past_collaborations: "",
             is_public: false,
+            under_review: false,
             contact: {
               email: session.user.email || "",
               phone: "",
@@ -239,20 +297,26 @@ const ProfileEdit = () => {
             gender: "prefer_not_to_say",
             date_of_birth: "",
             email: session.user.email || "",
-          })
-          setAvatarUrl(session.user.user_metadata?.avatar_url || null)
+          });
+          setAvatarUrl(session.user.user_metadata?.avatar_url || null);
         } else if (profileData) {
-          console.log("Loading profile data:", profileData)
+          console.log("Loading profile data:", profileData);
           // Cast profileData to unknown first, then to UserProfile
-          const typedProfileData = profileData as UserProfile
+          const typedProfileData = profileData as UserProfile;
 
           // Ensure array fields are properly formatted
-          const ensureArray = (value: any) => (Array.isArray(value) ? value : value ? [value] : [])
+          const ensureArray = (value: any) =>
+            Array.isArray(value) ? value : value ? [value] : [];
 
-          setProfile(typedProfileData)
-          setSocialLinks(typedProfileData.social_links || [])
-          setTotalFollowers(typedProfileData.social_links?.reduce((sum, link) => sum + (link.followers || 0), 0) || 0)
-          setAvatarUrl(typedProfileData.avatar_url || null)
+          setProfile(typedProfileData);
+          setSocialLinks(typedProfileData.social_links || []);
+          setTotalFollowers(
+            typedProfileData.social_links?.reduce(
+              (sum, link) => sum + (link.followers || 0),
+              0,
+            ) || 0,
+          );
+          setAvatarUrl(typedProfileData.avatar_url || null);
 
           form.reset({
             name: typedProfileData.name || "",
@@ -265,11 +329,16 @@ const ProfileEdit = () => {
             budget_range: typedProfileData.budget_range || "",
             min_budget: typedProfileData.min_budget || 0,
             max_budget: typedProfileData.max_budget || 0,
-            collaboration_types: ensureArray(typedProfileData.collaboration_types),
-            preferred_creator_niches: ensureArray(typedProfileData.preferred_creator_niches),
+            collaboration_types: ensureArray(
+              typedProfileData.collaboration_types,
+            ),
+            preferred_creator_niches: ensureArray(
+              typedProfileData.preferred_creator_niches,
+            ),
             partnership_goals: typedProfileData.partnership_goals || "",
             past_collaborations: typedProfileData.past_collaborations || "",
             is_public: typedProfileData.is_public || false,
+            under_review: typedProfileData.under_review || false,
             contact: {
               email: typedProfileData.email || "",
               phone: typedProfileData.phone || "",
@@ -277,65 +346,76 @@ const ProfileEdit = () => {
             },
             engagement_stats: {
               likes: typedProfileData.engagement_stats?.likes || [0, 0, 0],
-              comments: typedProfileData.engagement_stats?.comments || [0, 0, 0],
-              analyticsImage: typedProfileData.engagement_stats?.analyticsImage || "",
-              hideAnalytics: typedProfileData.engagement_stats?.hideAnalytics || false,
+              comments: typedProfileData.engagement_stats?.comments || [
+                0, 0, 0,
+              ],
+              analyticsImage:
+                typedProfileData.engagement_stats?.analyticsImage || "",
+              hideAnalytics:
+                typedProfileData.engagement_stats?.hideAnalytics || false,
             },
             gender: typedProfileData.gender || "prefer_not_to_say",
             date_of_birth: typedProfileData.date_of_birth || "",
             email: typedProfileData.email || "",
             phone: typedProfileData.phone || "",
             preferred_contact: typedProfileData.preferred_contact || "email",
-          })
+          });
         }
-        setLoading(false)
+        setLoading(false);
       } catch (error) {
-        console.error("Error in profile setup:", error)
-        toast.error("Failed to set up profile")
-        setLoading(false)
+        console.error("Error in profile setup:", error);
+        toast.error("Failed to set up profile");
+        setLoading(false);
       }
-    }
+    };
 
-    checkAuth()
-  }, [])
+    checkAuth();
+  }, []);
 
-  const handleSaveProfile = async () => {
-    console.log("handleSaveProfile called")
+  const handleSaveProfile = async (submitForReview = false) => {
+    console.log("handleSaveProfile called");
 
     try {
       // Fix array fields that might be strings
-      const formValues = form.getValues()
+      const formValues = form.getValues();
 
       // Check if collaboration_types is a string and convert to array if needed
       if (typeof formValues.collaboration_types === "string") {
-        form.setValue("collaboration_types", formValues.collaboration_types ? [formValues.collaboration_types] : [])
+        form.setValue(
+          "collaboration_types",
+          formValues.collaboration_types
+            ? [formValues.collaboration_types]
+            : [],
+        );
       }
 
       // Check if preferred_creator_niches is a string and convert to array if needed
       if (typeof formValues.preferred_creator_niches === "string") {
         form.setValue(
           "preferred_creator_niches",
-          formValues.preferred_creator_niches ? [formValues.preferred_creator_niches] : [],
-        )
+          formValues.preferred_creator_niches
+            ? [formValues.preferred_creator_niches]
+            : [],
+        );
       }
 
       // Validate form manually
-      const isValid = await form.trigger()
+      const isValid = await form.trigger();
       if (!isValid) {
-        console.log("Form validation failed:", form.formState.errors)
-        return
+        console.log("Form validation failed:", form.formState.errors);
+        return;
       }
 
-      const formData = form.getValues()
-      console.log("Form data:", formData)
+      const formData = form.getValues();
+      console.log("Form data:", formData);
 
       if (!user) {
-        console.error("No user found")
-        toast.error("You must be logged in to save your profile")
-        return
+        console.error("No user found");
+        toast.error("You must be logged in to save your profile");
+        return;
       }
 
-      setSaving(true)
+      setSaving(true);
 
       // Clean up engagement stats data
       const cleanedEngagementStats = formData.engagement_stats
@@ -345,7 +425,7 @@ const ProfileEdit = () => {
             comments: formData.engagement_stats.comments || [0, 0, 0],
             hideAnalytics: formData.engagement_stats.hideAnalytics || false,
           }
-        : undefined
+        : undefined;
 
       // Prepare profile data
       const profileData = {
@@ -374,155 +454,199 @@ const ProfileEdit = () => {
           : formData.collaboration_types
             ? [formData.collaboration_types]
             : [],
-        preferred_creator_niches: Array.isArray(formData.preferred_creator_niches)
+        preferred_creator_niches: Array.isArray(
+          formData.preferred_creator_niches,
+        )
           ? formData.preferred_creator_niches
           : formData.preferred_creator_niches
             ? [formData.preferred_creator_niches]
             : [],
         partnership_goals: formData.partnership_goals || "",
         past_collaborations: formData.past_collaborations || "",
-        is_public: formData.is_public || false,
+        // Always set is_public to false for creators submitting their profile
+        is_public:
+          profile?.type === "brand" ? formData.is_public || false : false,
+        // Only set under_review to true if explicitly submitting for review
+        under_review: submitForReview ? true : profile?.under_review || false,
         social_links: socialLinks,
         email: formData.email || formData.contact?.email || "",
         phone: formData.phone || formData.contact?.phone || "",
-        preferred_contact: formData.preferred_contact || formData.contact?.preferred_contact || "email",
+        preferred_contact:
+          formData.preferred_contact ||
+          formData.contact?.preferred_contact ||
+          "email",
         avatar_url: avatarUrl,
         engagement_stats: cleanedEngagementStats,
         gender: formData.gender || null,
         date_of_birth: formData.date_of_birth || null,
         updated_at: new Date().toISOString(),
-      }
+      };
 
-      console.log("Saving profile data:", profileData)
+      console.log("Saving profile data:", profileData);
 
-      const { error } = await supabase.from("profiles").upsert(profileData)
+      const { error } = await supabase.from("profiles").upsert(profileData);
 
       if (error) {
-        console.error("Supabase error:", error)
-        throw error
+        console.error("Supabase error:", error);
+        throw error;
       }
 
-      toast.success("Profile saved successfully!")
-      navigate("/profile")
+      if (submitForReview) {
+        toast.success("Profile submitted for review!");
+      } else {
+        toast.success("Profile saved successfully!");
+      }
+      navigate("/profile");
     } catch (error: any) {
-      console.error("Error saving profile:", error)
-      toast.error("Failed to save profile: " + (error.message || "Unknown error"))
+      console.error("Error saving profile:", error);
+      toast.error(
+        "Failed to save profile: " + (error.message || "Unknown error"),
+      );
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
-  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || !event.target.files[0]) return
+  const handleAvatarChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (!event.target.files || !event.target.files[0]) return;
 
-    setUploadingAvatar(true)
+    setUploadingAvatar(true);
 
     try {
-      const file = event.target.files[0]
+      const file = event.target.files[0];
 
       // Validate file size
       if (file.size > 2 * 1024 * 1024) {
-        toast.error("Image size should be less than 2MB")
-        setUploadingAvatar(false)
-        return
+        toast.error("Image size should be less than 2MB");
+        setUploadingAvatar(false);
+        return;
       }
 
       // Validate file type
-      const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"]
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "image/gif",
+      ];
       if (!allowedTypes.includes(file.type)) {
-        toast.error("Please upload a valid image file (JPEG, PNG, or GIF)")
-        setUploadingAvatar(false)
-        return
+        toast.error("Please upload a valid image file (JPEG, PNG, or GIF)");
+        setUploadingAvatar(false);
+        return;
       }
 
       // Upload to Supabase Storage
-      const fileExt = file.type.split("/")[1]
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`
-      const filePath = `avatars/${fileName}`
+      const fileExt = file.type.split("/")[1];
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
 
       // Remove old avatar if exists
       if (avatarUrl) {
-        const oldPath = avatarUrl.split("/").pop()
+        const oldPath = avatarUrl.split("/").pop();
         if (oldPath) {
-          await supabase.storage.from("profiles").remove([`avatars/${oldPath}`])
+          await supabase.storage
+            .from("profiles")
+            .remove([`avatars/${oldPath}`]);
         }
       }
 
       // Upload new avatar
-      const { error: uploadError, data } = await supabase.storage.from("profiles").upload(filePath, file, {
-        contentType: file.type,
-        upsert: true,
-      })
+      const { error: uploadError, data } = await supabase.storage
+        .from("profiles")
+        .upload(filePath, file, {
+          contentType: file.type,
+          upsert: true,
+        });
 
       if (uploadError) {
-        throw uploadError
+        throw uploadError;
       }
 
       // Get the public URL
       const {
         data: { publicUrl },
-      } = supabase.storage.from("profiles").getPublicUrl(filePath)
+      } = supabase.storage.from("profiles").getPublicUrl(filePath);
 
-      setAvatarUrl(publicUrl)
+      setAvatarUrl(publicUrl);
 
       // Update the profile with the new avatar URL
-      const { error: updateError } = await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id)
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
 
       if (updateError) {
-        throw updateError
+        throw updateError;
       }
 
-      toast.success("Avatar updated successfully")
+      toast.success("Avatar updated successfully");
     } catch (error: any) {
-      console.error("Error uploading avatar:", error)
-      toast.error(`Failed to upload avatar: ${error.message || "Unknown error"}`)
+      console.error("Error uploading avatar:", error);
+      toast.error(
+        `Failed to upload avatar: ${error.message || "Unknown error"}`,
+      );
     } finally {
-      setUploadingAvatar(false)
+      setUploadingAvatar(false);
     }
-  }
+  };
 
-  const updateSocialLink = (index: number, field: keyof SocialLink, value: string | number) => {
-    const newLinks = [...socialLinks]
-    newLinks[index] = { ...newLinks[index], [field]: value }
-    setSocialLinks(newLinks)
+  const updateSocialLink = (
+    index: number,
+    field: keyof SocialLink,
+    value: string | number,
+  ) => {
+    const newLinks = [...socialLinks];
+    newLinks[index] = { ...newLinks[index], [field]: value };
+    setSocialLinks(newLinks);
 
     // Update total followers
-    const total = newLinks.reduce((sum, link) => sum + (link.followers || 0), 0)
-    setTotalFollowers(total)
-    form.setValue("followers_count", total)
-  }
+    const total = newLinks.reduce(
+      (sum, link) => sum + (link.followers || 0),
+      0,
+    );
+    setTotalFollowers(total);
+    form.setValue("followers_count", total);
+  };
 
   const addSocialLink = () => {
-    setSocialLinks([...socialLinks, { platform: "other", url: "", followers: 0 }])
-  }
+    setSocialLinks([
+      ...socialLinks,
+      { platform: "other", url: "", followers: 0 },
+    ]);
+  };
 
   const removeSocialLink = (index: number) => {
-    const newLinks = socialLinks.filter((_, i) => i !== index)
-    setSocialLinks(newLinks)
+    const newLinks = socialLinks.filter((_, i) => i !== index);
+    setSocialLinks(newLinks);
 
     // Update total followers
-    const total = newLinks.reduce((sum, link) => sum + (link.followers || 0), 0)
-    setTotalFollowers(total)
-    form.setValue("followers_count", total)
-  }
+    const total = newLinks.reduce(
+      (sum, link) => sum + (link.followers || 0),
+      0,
+    );
+    setTotalFollowers(total);
+    form.setValue("followers_count", total);
+  };
 
   const getUserInitials = () => {
-    if (!profile?.name && !user?.user_metadata?.name) return "U"
+    if (!profile?.name && !user?.user_metadata?.name) return "U";
 
-    const nameToUse = profile?.name || user?.user_metadata?.name || ""
+    const nameToUse = profile?.name || user?.user_metadata?.name || "";
 
     return nameToUse
       .split(" ")
       .map((name: string) => name[0])
       .join("")
-      .toUpperCase()
-  }
+      .toUpperCase();
+  };
 
   const getPlatformIcon = (platform: string) => {
-    const found = platformOptions.find((p) => p.value === platform)
-    const IconComponent = found?.icon || Globe
-    return <IconComponent className="h-4 w-4" />
-  }
+    const found = platformOptions.find((p) => p.value === platform);
+    const IconComponent = found?.icon || Globe;
+    return <IconComponent className="h-4 w-4" />;
+  };
 
   const platformOptions = [
     { value: "instagram", label: "Instagram", icon: Instagram },
@@ -532,11 +656,11 @@ const ProfileEdit = () => {
     { value: "youtube", label: "YouTube", icon: Youtube },
     { value: "tiktok", label: "TikTok", icon: Send },
     { value: "other", label: "Other", icon: Globe },
-  ]
+  ];
 
   const getCategories = () => {
-    return profile?.type === "brand" ? brandCategories : creatorCategories
-  }
+    return profile?.type === "brand" ? brandCategories : creatorCategories;
+  };
 
   if (loading) {
     return (
@@ -549,7 +673,7 @@ const ProfileEdit = () => {
         </div>
         <Footer />
       </div>
-    )
+    );
   }
 
   return (
@@ -562,18 +686,50 @@ const ProfileEdit = () => {
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h1 className="text-3xl font-bold">Edit Profile</h1>
-                <p className="text-muted-foreground mt-1">Update your profile information</p>
+                <p className="text-muted-foreground mt-1">
+                  Update your profile information
+                </p>
               </div>
-              <Button type="button" disabled={saving} onClick={handleSaveProfile}>
-                {saving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  "Save Changes"
+              <div className="flex gap-2">
+                {profile?.type === "creator" &&
+                  !profile?.is_public &&
+                  !profile?.under_review && (
+                    <Button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => handleSaveProfile(true)}
+                      variant="secondary"
+                    >
+                      {saving ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        "Submit for Review"
+                      )}
+                    </Button>
+                  )}
+                {profile?.type === "creator" && profile?.under_review && (
+                  <Button type="button" disabled={true} variant="outline">
+                    Under Review
+                  </Button>
                 )}
-              </Button>
+                <Button
+                  type="button"
+                  disabled={saving}
+                  onClick={() => handleSaveProfile(false)}
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </div>
             </div>
 
             {profile?.type === "brand" ? (
@@ -581,7 +737,9 @@ const ProfileEdit = () => {
               <Card>
                 <CardHeader>
                   <CardTitle>Basic Information</CardTitle>
-                  <CardDescription>Add your brand details and contact information</CardDescription>
+                  <CardDescription>
+                    Add your brand details and contact information
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center gap-4">
@@ -594,9 +752,15 @@ const ProfileEdit = () => {
                         type="button"
                         variant="outline"
                         disabled={uploadingAvatar}
-                        onClick={() => document.getElementById("avatar-upload")?.click()}
+                        onClick={() =>
+                          document.getElementById("avatar-upload")?.click()
+                        }
                       >
-                        {uploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : "Change Avatar"}
+                        {uploadingAvatar ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          "Change Avatar"
+                        )}
                       </Button>
                       <input
                         id="avatar-upload"
@@ -615,7 +779,10 @@ const ProfileEdit = () => {
                       <FormItem>
                         <FormLabel>Brand Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your brand name" {...field} />
+                          <Input
+                            placeholder="Enter your brand name"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -629,7 +796,11 @@ const ProfileEdit = () => {
                       <FormItem>
                         <FormLabel>Bio</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Tell us about your brand..." className="min-h-[100px]" {...field} />
+                          <Textarea
+                            placeholder="Tell us about your brand..."
+                            className="min-h-[100px]"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -643,7 +814,10 @@ const ProfileEdit = () => {
                       <FormItem>
                         <FormLabel>Location</FormLabel>
                         <FormControl>
-                          <Input placeholder="Where are you based?" {...field} />
+                          <Input
+                            placeholder="Where are you based?"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -674,14 +848,18 @@ const ProfileEdit = () => {
                           {brandCategories.map((category) => (
                             <Badge
                               key={category}
-                              variant={field.value?.includes(category) ? "default" : "outline"}
+                              variant={
+                                field.value?.includes(category)
+                                  ? "default"
+                                  : "outline"
+                              }
                               className="cursor-pointer"
                               onClick={() => {
-                                const current = field.value || []
+                                const current = field.value || [];
                                 const updated = current.includes(category)
                                   ? current.filter((c) => c !== category)
-                                  : [...current, category]
-                                field.onChange(updated)
+                                  : [...current, category];
+                                field.onChange(updated);
                               }}
                             >
                               {category}
@@ -700,7 +878,11 @@ const ProfileEdit = () => {
                       <FormItem>
                         <FormLabel>Contact Email</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="Contact email" {...field} />
+                          <Input
+                            type="email"
+                            placeholder="Contact email"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -714,7 +896,11 @@ const ProfileEdit = () => {
                       <FormItem>
                         <FormLabel>Contact Phone (Optional)</FormLabel>
                         <FormControl>
-                          <Input type="tel" placeholder="Contact phone number" {...field} />
+                          <Input
+                            type="tel"
+                            placeholder="Contact phone number"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -727,7 +913,10 @@ const ProfileEdit = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Preferred Contact Method</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -745,21 +934,24 @@ const ProfileEdit = () => {
             ) : (
               // Creator profile - show all tabs
               <Tabs defaultValue="basic" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1">
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1">
                   <TabsTrigger value="basic" className="text-xs sm:text-sm">
                     Basic Info
                   </TabsTrigger>
                   <TabsTrigger value="social" className="text-xs sm:text-sm">
                     Social Media
                   </TabsTrigger>
-                  <TabsTrigger value="engagement" className="text-xs sm:text-sm">
+                  <TabsTrigger
+                    value="engagement"
+                    className="text-xs sm:text-sm"
+                  >
                     Engagement
                   </TabsTrigger>
-                  <TabsTrigger value="preferences" className="text-xs sm:text-sm">
+                  <TabsTrigger
+                    value="preferences"
+                    className="text-xs sm:text-sm"
+                  >
                     Preferences
-                  </TabsTrigger>
-                  <TabsTrigger value="visibility" className="text-xs sm:text-sm">
-                    Visibility
                   </TabsTrigger>
                 </TabsList>
 
@@ -768,14 +960,20 @@ const ProfileEdit = () => {
                     <CardHeader>
                       <CardTitle>Profile Picture</CardTitle>
                       <CardDescription>
-                        Upload a profile picture to make your profile more recognizable.
+                        Upload a profile picture to make your profile more
+                        recognizable.
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center sm:flex-row sm:items-start gap-6">
                       <div className="relative">
                         <Avatar className="h-24 w-24 border-2 border-muted">
-                          <AvatarImage src={avatarUrl || ""} alt={profile?.name || "Profile"} />
-                          <AvatarFallback className="text-xl">{getUserInitials()}</AvatarFallback>
+                          <AvatarImage
+                            src={avatarUrl || ""}
+                            alt={profile?.name || "Profile"}
+                          />
+                          <AvatarFallback className="text-xl">
+                            {getUserInitials()}
+                          </AvatarFallback>
                         </Avatar>
                         {uploadingAvatar && (
                           <div className="absolute inset-0 flex items-center justify-center bg-background/80 rounded-full">
@@ -805,7 +1003,10 @@ const ProfileEdit = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle>Basic Information</CardTitle>
-                      <CardDescription>This information will be displayed publicly on your profile.</CardDescription>
+                      <CardDescription>
+                        This information will be displayed publicly on your
+                        profile.
+                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <FormField
@@ -815,9 +1016,14 @@ const ProfileEdit = () => {
                           <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Your name or brand name" {...field} />
+                              <Input
+                                placeholder="Your name or brand name"
+                                {...field}
+                              />
                             </FormControl>
-                            <FormDescription>Your full name or brand name</FormDescription>
+                            <FormDescription>
+                              Your full name or brand name
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -837,7 +1043,9 @@ const ProfileEdit = () => {
                               />
                             </FormControl>
                             <FormDescription>
-                              <span className={`${form.watch("bio")?.length || 0 > 450 ? "text-orange-500" : ""}`}>
+                              <span
+                                className={`${form.watch("bio")?.length || 0 > 450 ? "text-orange-500" : ""}`}
+                              >
                                 {form.watch("bio")?.length || 0}/500 characters
                               </span>
                             </FormDescription>
@@ -855,7 +1063,9 @@ const ProfileEdit = () => {
                             <FormControl>
                               <Input placeholder="City, Country" {...field} />
                             </FormControl>
-                            <FormDescription>Where are you based? (optional)</FormDescription>
+                            <FormDescription>
+                              Where are you based? (optional)
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -868,7 +1078,10 @@ const ProfileEdit = () => {
                           <FormItem>
                             <FormLabel>Gender</FormLabel>
                             <FormControl>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
                                 <FormControl>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Select your gender" />
@@ -878,11 +1091,15 @@ const ProfileEdit = () => {
                                   <SelectItem value="male">Male</SelectItem>
                                   <SelectItem value="female">Female</SelectItem>
                                   <SelectItem value="other">Other</SelectItem>
-                                  <SelectItem value="prefer_not_to_say">Prefer not to say</SelectItem>
+                                  <SelectItem value="prefer_not_to_say">
+                                    Prefer not to say
+                                  </SelectItem>
                                 </SelectContent>
                               </Select>
                             </FormControl>
-                            <FormDescription>Your gender (optional)</FormDescription>
+                            <FormDescription>
+                              Your gender (optional)
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -895,9 +1112,15 @@ const ProfileEdit = () => {
                           <FormItem>
                             <FormLabel>Date of Birth</FormLabel>
                             <FormControl>
-                              <Input type="date" placeholder="YYYY-MM-DD" {...field} />
+                              <Input
+                                type="date"
+                                placeholder="YYYY-MM-DD"
+                                {...field}
+                              />
                             </FormControl>
-                            <FormDescription>Your date of birth (optional)</FormDescription>
+                            <FormDescription>
+                              Your date of birth (optional)
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -910,24 +1133,34 @@ const ProfileEdit = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle>Social Media Links</CardTitle>
-                      <CardDescription>Add your social media profiles to connect with others.</CardDescription>
+                      <CardDescription>
+                        Add your social media profiles to connect with others.
+                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 gap-4">
                         {socialLinks.map((link, index) => (
-                          <div key={index} className="flex flex-col sm:flex-row gap-4">
+                          <div
+                            key={index}
+                            className="flex flex-col sm:flex-row gap-4"
+                          >
                             <div className="w-full sm:w-1/4">
                               <Label>Platform</Label>
                               <Select
                                 value={link.platform}
-                                onValueChange={(value) => updateSocialLink(index, "platform", value)}
+                                onValueChange={(value) =>
+                                  updateSocialLink(index, "platform", value)
+                                }
                               >
                                 <SelectTrigger>
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {platformOptions.map((option) => (
-                                    <SelectItem key={option.value} value={option.value}>
+                                    <SelectItem
+                                      key={option.value}
+                                      value={option.value}
+                                    >
                                       <div className="flex items-center gap-2">
                                         {getPlatformIcon(option.value)}
                                         {option.label}
@@ -943,7 +1176,9 @@ const ProfileEdit = () => {
                               <Input
                                 placeholder="Profile URL"
                                 value={link.url}
-                                onChange={(e) => updateSocialLink(index, "url", e.target.value)}
+                                onChange={(e) =>
+                                  updateSocialLink(index, "url", e.target.value)
+                                }
                               />
                             </div>
 
@@ -955,7 +1190,11 @@ const ProfileEdit = () => {
                                   placeholder="Followers"
                                   value={link.followers || ""}
                                   onChange={(e) =>
-                                    updateSocialLink(index, "followers", Number.parseInt(e.target.value) || 0)
+                                    updateSocialLink(
+                                      index,
+                                      "followers",
+                                      Number.parseInt(e.target.value) || 0,
+                                    )
                                   }
                                   disabled={!link.url}
                                 />
@@ -974,7 +1213,12 @@ const ProfileEdit = () => {
                         ))}
                       </div>
 
-                      <Button type="button" variant="outline" onClick={addSocialLink} className="w-full">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={addSocialLink}
+                        className="w-full"
+                      >
                         <Plus className="h-4 w-4 mr-2" />
                         Add Social Link
                       </Button>
@@ -987,7 +1231,8 @@ const ProfileEdit = () => {
                     <CardHeader>
                       <CardTitle>Engagement Stats</CardTitle>
                       <CardDescription>
-                        Add your engagement metrics to help brands understand your reach
+                        Add your engagement metrics to help brands understand
+                        your reach
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -996,9 +1241,12 @@ const ProfileEdit = () => {
                           form.setValue("engagement_stats", stats, {
                             shouldDirty: true,
                             shouldTouch: true,
-                          })
+                          });
                         }}
-                        initialStats={form.getValues("engagement_stats") || profile?.engagement_stats}
+                        initialStats={
+                          form.getValues("engagement_stats") ||
+                          profile?.engagement_stats
+                        }
                         totalFollowers={totalFollowers}
                       />
                     </CardContent>
@@ -1009,7 +1257,9 @@ const ProfileEdit = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle>Creator Preferences</CardTitle>
-                      <CardDescription>Set your preferences for collaborations</CardDescription>
+                      <CardDescription>
+                        Set your preferences for collaborations
+                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <FormField
@@ -1022,21 +1272,28 @@ const ProfileEdit = () => {
                               {getCategories().map((category) => (
                                 <Badge
                                   key={category}
-                                  variant={field.value?.includes(category) ? "default" : "outline"}
+                                  variant={
+                                    field.value?.includes(category)
+                                      ? "default"
+                                      : "outline"
+                                  }
                                   className="cursor-pointer"
                                   onClick={() => {
-                                    const current = field.value || []
+                                    const current = field.value || [];
                                     const updated = current.includes(category)
                                       ? current.filter((c) => c !== category)
-                                      : [...current, category]
-                                    field.onChange(updated)
+                                      : [...current, category];
+                                    field.onChange(updated);
                                   }}
                                 >
                                   {category}
                                 </Badge>
                               ))}
                             </div>
-                            <FormDescription>Select the categories that best describe your content</FormDescription>
+                            <FormDescription>
+                              Select the categories that best describe your
+                              content
+                            </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -1052,50 +1309,28 @@ const ProfileEdit = () => {
                               {PLATFORMS.map((platform) => (
                                 <Badge
                                   key={platform}
-                                  variant={field.value?.includes(platform) ? "default" : "outline"}
+                                  variant={
+                                    field.value?.includes(platform)
+                                      ? "default"
+                                      : "outline"
+                                  }
                                   className="cursor-pointer"
                                   onClick={() => {
-                                    const current = field.value || []
+                                    const current = field.value || [];
                                     const updated = current.includes(platform)
                                       ? current.filter((p) => p !== platform)
-                                      : [...current, platform]
-                                    field.onChange(updated)
+                                      : [...current, platform];
+                                    field.onChange(updated);
                                   }}
                                 >
                                   {platform}
                                 </Badge>
                               ))}
                             </div>
-                            <FormDescription>Select the platforms where you create content</FormDescription>
+                            <FormDescription>
+                              Select the platforms where you create content
+                            </FormDescription>
                             <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="visibility" className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Profile Visibility</CardTitle>
-                      <CardDescription>Control who can see your profile and contact you.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="is_public"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">Public Profile</FormLabel>
-                              <FormDescription>
-                                When enabled, your profile will be visible to brands and other creators.
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
                           </FormItem>
                         )}
                       />
@@ -1110,8 +1345,7 @@ const ProfileEdit = () => {
 
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default ProfileEdit
-
+export default ProfileEdit;

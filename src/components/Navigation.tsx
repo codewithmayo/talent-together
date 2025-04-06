@@ -1,20 +1,28 @@
-import { useState, useEffect } from 'react';
-import { NavLink, useNavigate, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from 'sonner';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import { Menu, X, User, LogOut, Settings, Info, MessageSquare } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { Users2, Building2 } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { NavLink, useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  Settings,
+  Info,
+  MessageSquare,
+} from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Users2, Building2 } from "lucide-react";
 
 type User = {
   id: string;
@@ -29,43 +37,50 @@ export function Navigation() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userType, setUserType] = useState<'creator' | 'brand' | null>(null);
+  const [userType, setUserType] = useState<
+    "creator" | "brand" | "admin" | null
+  >(null);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   useEffect(() => {
     const getCurrentUser = async () => {
       const { data, error } = await supabase.auth.getSession();
-      
+
       if (error) {
-        console.error('Error getting session:', error);
+        console.error("Error getting session:", error);
         setLoading(false);
         return;
       }
-      
+
       if (data && data.session) {
         const { data: userData } = await supabase.auth.getUser();
         if (userData && userData.user) {
           setUser(userData.user);
-          
+
           // Get user type from profiles table
           const { data: profileData } = await supabase
-            .from('profiles')
-            .select('type')
-            .eq('id', userData.user.id)
+            .from("profiles")
+            .select("type")
+            .eq("id", userData.user.id)
             .single();
-            
-          if (profileData && (profileData.type === 'creator' || profileData.type === 'brand')) {
+
+          if (
+            profileData &&
+            (profileData.type === "creator" ||
+              profileData.type === "brand" ||
+              profileData.type === "admin")
+          ) {
             setUserType(profileData.type);
           }
         }
       }
-      
+
       setLoading(false);
     };
 
     getCurrentUser();
-    
+
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (session) {
@@ -74,9 +89,9 @@ export function Navigation() {
           setUser(null);
         }
         setLoading(false);
-      }
+      },
     );
-    
+
     return () => {
       if (authListener && authListener.subscription) {
         authListener.subscription.unsubscribe();
@@ -88,11 +103,11 @@ export function Navigation() {
     try {
       await supabase.auth.signOut();
       setUser(null);
-      toast.success('Signed out successfully');
-      navigate('/');
+      toast.success("Signed out successfully");
+      navigate("/");
     } catch (error) {
-      console.error('Error signing out:', error);
-      toast.error('Failed to sign out');
+      console.error("Error signing out:", error);
+      toast.error("Failed to sign out");
     }
   };
 
@@ -103,15 +118,15 @@ export function Navigation() {
   const getUserInitials = () => {
     if (user?.user_metadata?.name) {
       return user.user_metadata.name
-        .split(' ')
+        .split(" ")
         .map((name: string) => name[0])
-        .join('')
+        .join("")
         .toUpperCase();
     }
     if (user?.email) {
       return user.email.substring(0, 2).toUpperCase();
     }
-    return 'U';
+    return "U";
   };
 
   return (
@@ -125,44 +140,67 @@ export function Navigation() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6 absolute left-1/2 transform -translate-x-1/2">
-          <Link to="/creators" className="text-sm font-medium text-muted-foreground hover:text-primary">
+          <Link
+            to="/creators"
+            className="text-sm font-medium text-muted-foreground hover:text-primary"
+          >
             Creators
           </Link>
-          <Link to="/brand-campaigns" className="text-sm font-medium text-muted-foreground hover:text-primary">
+          <Link
+            to="/brand-campaigns"
+            className="text-sm font-medium text-muted-foreground hover:text-primary"
+          >
             Brand Campaigns
           </Link>
-          <Link to="/about" className="text-sm font-medium text-muted-foreground hover:text-primary">
+          <Link
+            to="/about"
+            className="text-sm font-medium text-muted-foreground hover:text-primary"
+          >
             About
           </Link>
-          <Link to="/contact" className="text-sm font-medium text-muted-foreground hover:text-primary">
+          <Link
+            to="/contact"
+            className="text-sm font-medium text-muted-foreground hover:text-primary"
+          >
             Contact
           </Link>
         </nav>
-        
+
         <div className="flex items-center space-x-4">
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.user_metadata?.avatar_url || ''} alt="Profile" />
+                    <AvatarImage
+                      src={user.user_metadata?.avatar_url || ""}
+                      alt="Profile"
+                    />
                     <AvatarFallback>{getUserInitials()}</AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => navigate('/profile')}>
+                <DropdownMenuItem onClick={() => navigate("/profile")}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/profile-edit')}>
+                <DropdownMenuItem onClick={() => navigate("/profile-edit")}>
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Edit Profile</span>
                 </DropdownMenuItem>
-                {userType === 'brand' && (
-                  <DropdownMenuItem onClick={() => navigate('/campaigns')}>
+                {userType === "brand" && (
+                  <DropdownMenuItem onClick={() => navigate("/campaigns")}>
                     <Building2 className="mr-2 h-4 w-4" />
                     <span>My Campaigns</span>
+                  </DropdownMenuItem>
+                )}
+                {userType === "admin" && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/admin/profiles-under-review")}
+                  >
+                    <Users2 className="mr-2 h-4 w-4" />
+                    <span>Review Profiles</span>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
@@ -216,13 +254,22 @@ export function Navigation() {
             >
               Brand Campaigns
             </Link>
-            {userType === 'brand' && (
+            {userType === "brand" && (
               <Link
                 to="/campaigns"
                 className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 My Campaigns
+              </Link>
+            )}
+            {userType === "admin" && (
+              <Link
+                to="/admin/profiles-under-review"
+                className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Review Profiles
               </Link>
             )}
             <Link
@@ -247,7 +294,10 @@ export function Navigation() {
                   </Link>
                 </Button>
                 <Button asChild className="w-full">
-                  <Link to="/login?tab=signup" onClick={() => setMobileMenuOpen(false)}>
+                  <Link
+                    to="/login?tab=signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     Sign up
                   </Link>
                 </Button>

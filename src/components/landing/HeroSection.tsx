@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
+
 export function HeroSection() {
   return (
     <section className="relative py-20 overflow-hidden bg-background">
